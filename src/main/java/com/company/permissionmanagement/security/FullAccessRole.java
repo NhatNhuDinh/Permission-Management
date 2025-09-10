@@ -1,5 +1,6 @@
 package com.company.permissionmanagement.security;
 
+import com.company.permissionmanagement.annotation.ForUser;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
@@ -9,6 +10,7 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
+@ForUser(true)
 @ResourceRole(name = "Full Access", code = FullAccessRole.CODE)
 public interface FullAccessRole {
 

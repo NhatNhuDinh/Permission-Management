@@ -1,6 +1,7 @@
 package com.company.permissionmanagement.converter;
 
 
+import com.company.permissionmanagement.annotation.ForUser;
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
 import io.jmix.core.EntityStates;
 import io.jmix.security.model.ResourceRole;
@@ -10,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @Component
@@ -25,14 +27,9 @@ public class ExtendRoleModelConverter extends RoleModelConverter {
 
     @Override
     public ResourceRoleModel createResourceRoleModel(ResourceRole role) {
-        // tạo model gốc trước
         ResourceRoleModel base = super.createResourceRoleModel(role);
-
-        // bọc sang model mở rộng của bạn
         ExtendResourceRoleModel model = new ExtendResourceRoleModel();
         BeanUtils.copyProperties(base, model);
-
-        // --- NHẤT ĐỊNH phải tự set thủ công field mở rộng ---
 
         Map<String, String> props = role.getCustomProperties();
         if (props != null) {
@@ -42,11 +39,7 @@ public class ExtendRoleModelConverter extends RoleModelConverter {
             }
         }
 
-
         return model;
     }
-
-
-
 
 }

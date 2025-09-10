@@ -3,6 +3,9 @@ package com.company.permissionmanagement.view.resourcerolemodellist;
 import com.company.permissionmanagement.converter.ExtendRoleModelConverter;
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.action.list.CreateAction;
+import io.jmix.flowui.action.list.EditAction;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.BaseRoleModel;
@@ -14,6 +17,8 @@ import org.springframework.lang.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
+
+import static io.jmix.flowui.component.UiComponentUtils.getView;
 
 @Route(value = "sec/resourcerolemodels-ext", layout = DefaultMainViewParent.class)
 @ViewController(id = "sec_ResourceRoleModel.list")
@@ -29,13 +34,11 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
     @Autowired
     private ExtendRoleModelConverter extroleModelConverter;
 
-
     @Override
     @Subscribe
     public void onBeforeShow(View.BeforeShowEvent event) {
         this.loadRoles((RoleFilterChangeEvent) null);
     }
-
 
     private void loadRoles(@Nullable RoleFilterChangeEvent event) {
         List<ExtendResourceRoleModel> items =
