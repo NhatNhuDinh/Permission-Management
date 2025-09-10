@@ -3,6 +3,8 @@ package com.company.permissionmanagement.view.resourcerolemodellist;
 import com.company.permissionmanagement.converter.ExtendRoleModelConverter;
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.BaseRoleModel;
@@ -29,10 +31,15 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
     @Autowired
     private ExtendRoleModelConverter extroleModelConverter;
 
+    @Autowired
+    private ViewNavigators viewNavigators;
+
+    @ViewComponent
+    private DataGrid<ExtendResourceRoleModel> roleModelsTable;
 
     @Override
     @Subscribe
-    public void onBeforeShow(View.BeforeShowEvent event) {
+    public void onBeforeShow(BeforeShowEvent event) {
         this.loadRoles((RoleFilterChangeEvent) null);
     }
 
@@ -48,5 +55,9 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
 
         roleModelsDc.setItems(items);
     }
+
+
+
+    
 
 }

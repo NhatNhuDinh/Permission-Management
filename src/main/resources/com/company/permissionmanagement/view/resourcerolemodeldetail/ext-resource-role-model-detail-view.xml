@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://io.jmix.securityflowui.view.resourcerole/resourceRoleModelDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="roleModelDc"
+                  class="io.jmix.security.model.ResourceRoleModel">
+            <collection id="resourcePoliciesDc" property="resourcePolicies"/>
+        </instance>
+        <collection id="childRolesDc" class="io.jmix.security.model.ResourceRoleModel"/>
+    </data>
+    <facets>
+        <settings auto="true"/>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto" expand="tabSheet">
+            <formLayout id="form" dataContainer="roleModelDc">
+                <textField id="nameField" property="name"/>
+                <textField id="sourceField" property="source" readOnly="true"/>
+                <textField id="codeField" property="code" readOnly="true"/>
+                <checkboxGroup id="scopesField" property="scopes" required="true"/>
+                <textArea id="descriptionField" property="description" height="9.5em"/>
+            </formLayout>
+            <tabSheet id="tabSheet" width="100%" minHeight="30em">
+                <tab id="resourcePoliciesTab"
+                     label="msg://io.jmix.security.model/ResourceRoleModel.resourcePolicies">
+                    <vbox id="resourcePoliciesWrapper" padding="false" height="100%">
+                        <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
+                            <dropdownButton id="createDropdownButton" text="msg:///actions.Create" themeNames="primary"
+                                            icon="PLUS">
+                                <items>
+                                    <actionItem id="createMenuPolicy"
+                                                ref="resourcePoliciesTable.createMenuPolicy"/>
+                                    <actionItem id="createViewPolicy"
+                                                ref="resourcePoliciesTable.createViewPolicy"/>
+                                    <actionItem id="createEntityPolicy"
+                                                ref="resourcePoliciesTable.createEntityPolicy"/>
+                                    <actionItem id="createEntityAttributePolicy"
+                                                ref="resourcePoliciesTable.createEntityAttributePolicy"/>
+                                    <actionItem id="createSpecificPolicy"
+                                                ref="resourcePoliciesTable.createSpecificPolicy"/>
+                                </items>
+                            </dropdownButton>
+                            <button action="resourcePoliciesTable.edit"/>
+                            <button action="resourcePoliciesTable.read"/>
+                            <button action="resourcePoliciesTable.remove"/>
+                        </hbox>
+                        <dataGrid id="resourcePoliciesTable"
+                                  dataContainer="resourcePoliciesDc"
+                                  selectionMode="MULTI"
+                                  columnReorderingAllowed="true"
+                                  width="100%">
+                            <actions>
+                                <action id="createMenuPolicy"
+                                        text="msg://io.jmix.securityflowui.view.resourcerole/actions.menuPolicy.text"/>
+                                <action id="createViewPolicy"
+                                        text="msg://io.jmix.securityflowui.view.resourcerole/actions.viewPolicy.text"/>
+                                <action id="createEntityPolicy"
+                                        text="msg://io.jmix.securityflowui.view.resourcerole/actions.entityPolicy.text"/>
+                                <action id="createEntityAttributePolicy"
+                                        text="msg://io.jmix.securityflowui.view.resourcerole/actions.entityAttributePolicy.text"/>
+                                <action id="createSpecificPolicy"
+                                        text="msg://io.jmix.securityflowui.view.resourcerole/actions.specificPolicy.text"/>
+                                <action id="edit" type="list_edit"/>
+                                <action id="read" type="list_read"/>
+                                <action id="remove" type="list_remove"/>
+                            </actions>
+                            <columns resizable="true">
+                                <column property="policyGroup"/>
+                                <column property="type"/>
+                                <column property="resource"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </tab>
+                <tab id="childRolesTab"
+                     label="msg://io.jmix.security.model/ResourceRoleModel.childRoles">
+                    <vbox id="childRolesWrapper" padding="false" height="100%">
+                        <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
+                            <button action="childRolesTable.add"/>
+                            <button action="childRolesTable.remove"/>
+                        </hbox>
+                        <dataGrid id="childRolesTable"
+                                  dataContainer="childRolesDc"
+                                  selectionMode="MULTI"
+                                  columnReorderingAllowed="true"
+                                  width="100%">
+                            <actions>
+                                <action id="add" type="list_add"/>
+                                <action id="remove" type="list_remove">
+                                    <properties>
+                                        <property name="confirmation" value="false"/>
+                                    </properties>
+                                </action>
+                            </actions>
+                            <columns resizable="true">
+                                <column property="name" flexGrow="2"/>
+                                <column property="code"/>
+                                <column property="source"/>
+                            </columns>
+                        </dataGrid>
+                    </vbox>
+                </tab>
+            </tabSheet>
+        </vbox>
+        <hbox id="detailActions"
+              classNames="px-m py-s bg-contrast-5">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
