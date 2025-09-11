@@ -9,10 +9,12 @@ import io.jmix.core.ClassManager;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.UUID;
 
 @Component("sec_CustomAnnotatedRoleBuilder")
-@Primary // Quan trọng: để Jmix ưu tiên bean này!
+@Primary
 public class CustomAnnotatedRoleBuilder extends AnnotatedRoleBuilderImpl {
 
     public CustomAnnotatedRoleBuilder(
@@ -26,23 +28,24 @@ public class CustomAnnotatedRoleBuilder extends AnnotatedRoleBuilderImpl {
     @Override
     public ResourceRole createResourceRole(String className) {
         ResourceRole role = super.createResourceRole(className);
-
-        // Inject @ForUser (và các annotation khác nếu cần)
         Class<?> roleClass = null;
         try {
             roleClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            // Nếu không tìm được class, có thể log hoặc bỏ qua
         }
 
         if (roleClass != null && roleClass.isAnnotationPresent(ForUser.class)) {
             ForUser ann = roleClass.getAnnotation(ForUser.class);
             role.getCustomProperties().put("forUser", String.valueOf(ann.value()));
+
+            String dbId = role.getCustomProperties().get("databaseId");
+            if (dbId == null || dbId.isBlank()) {
+                String stable = UUID.nameUUIDFromBytes(role.getCode().getBytes(StandardCharsets.UTF_8)).toString();
+                role.getCustomProperties().put("databaseId", stable);
+            }
         }
-        // Nếu có nhiều annotation custom, xử lý tương tự
 
         return role;
     }
 
-    // Nếu bạn không custom row-level role thì không cần override createRowLevelRole
 }

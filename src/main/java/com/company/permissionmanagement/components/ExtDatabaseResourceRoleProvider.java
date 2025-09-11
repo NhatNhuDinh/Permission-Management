@@ -4,8 +4,6 @@ import com.company.permissionmanagement.entity.ExtendResourceRoleEntity;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.securitydata.impl.role.provider.DatabaseResourceRoleProvider;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;

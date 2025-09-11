@@ -19,10 +19,10 @@
       focusComponent="form">
     <data>
         <instance id="roleModelDc"
-                  class="io.jmix.security.model.ResourceRoleModel">
+                  class="com.company.permissionmanagement.entity.ExtendResourceRoleModel">
             <collection id="resourcePoliciesDc" property="resourcePolicies"/>
         </instance>
-        <collection id="childRolesDc" class="io.jmix.security.model.ResourceRoleModel"/>
+        <collection id="childRolesDc" class="com.company.permissionmanagement.entity.ExtendResourceRoleModel"/>
     </data>
     <facets>
         <settings auto="true"/>
@@ -42,6 +42,7 @@
                 <textField id="codeField" property="code" readOnly="true"/>
                 <checkboxGroup id="scopesField" property="scopes" required="true"/>
                 <textArea id="descriptionField" property="description" height="9.5em"/>
+                <checkbox id="forUserField" property="forUser"/>
             </formLayout>
             <tabSheet id="tabSheet" width="100%" minHeight="30em">
                 <tab id="resourcePoliciesTab"

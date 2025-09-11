@@ -2,10 +2,12 @@ package com.company.permissionmanagement.view.resourcerolemodellist;
 
 import com.company.permissionmanagement.converter.ExtendRoleModelConverter;
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
+import com.company.permissionmanagement.persistence.ExtendDatabaseRolePersistence;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.action.list.CreateAction;
-import io.jmix.flowui.action.list.EditAction;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.BaseRoleModel;
@@ -17,8 +19,6 @@ import org.springframework.lang.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
-
-import static io.jmix.flowui.component.UiComponentUtils.getView;
 
 @Route(value = "sec/resourcerolemodels-ext", layout = DefaultMainViewParent.class)
 @ViewController(id = "sec_ResourceRoleModel.list")
@@ -34,6 +34,15 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
     @Autowired
     private ExtendRoleModelConverter extroleModelConverter;
 
+    @Autowired
+    private ExtendDatabaseRolePersistence extendDatabaseRolePersistence;
+
+    @ViewComponent
+    private DataGrid<ExtendResourceRoleModel> roleModelsTable;
+
+    @Autowired
+    private Dialogs dialogs;
+
     @Override
     @Subscribe
     public void onBeforeShow(View.BeforeShowEvent event) {
@@ -44,12 +53,29 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
         List<ExtendResourceRoleModel> items =
                 roleRepository.getAllRoles().stream()
                         .filter(role -> event == null || event.matches(role))
-                        .map(extroleModelConverter::createResourceRoleModel)
-                        .map(m -> (ExtendResourceRoleModel) m)
+                        .map(extroleModelConverter::createExtResourceRoleModel)
                         .sorted(Comparator.comparing(BaseRoleModel::getName))
                         .toList();
 
         roleModelsDc.setItems(items);
+    }
+
+    @Subscribe("roleModelsTable.remove")
+    public void onRoleModelsTableRemove(ActionPerformedEvent event) {
+        List<ExtendResourceRoleModel> selectedRoles = roleModelsTable.getSelectedItems().stream().toList();
+        if (!selectedRoles.isEmpty()) {
+            dialogs.createOptionDialog()
+                    .withHeader("Confirm delete")
+                    .withText("Are you sure you want to delete selected roles?")
+                    .withActions(
+                            new DialogAction(DialogAction.Type.YES).withHandler(e -> {
+                                extendDatabaseRolePersistence.removeRoles(selectedRoles);
+                                loadRoles(null);
+                            }),
+                            new DialogAction(DialogAction.Type.NO)
+                    )
+                    .open();
+        }
     }
 
 }
