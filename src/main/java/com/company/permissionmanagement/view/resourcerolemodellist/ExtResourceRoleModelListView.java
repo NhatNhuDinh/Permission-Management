@@ -1,10 +1,8 @@
 package com.company.permissionmanagement.view.resourcerolemodellist;
 
 import com.company.permissionmanagement.converter.ExtendRoleModelConverter;
-import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
+import com.company.permissionmanagement.entity.ExtResourceRoleModel;
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.ViewNavigators;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.BaseRoleModel;
@@ -17,13 +15,13 @@ import org.springframework.lang.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
-@Route(value = "sec/resourcerolemodels-ext", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
 @ViewController(id = "sec_ResourceRoleModel.list")
 @ViewDescriptor(path = "ext-resource-role-model-list-view.xml")
 public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
 
     @ViewComponent
-    private CollectionContainer<ExtendResourceRoleModel> roleModelsDc;
+    private CollectionContainer<ExtResourceRoleModel> roleModelsDc;
 
     @Autowired
     private ResourceRoleRepository roleRepository;
@@ -31,31 +29,22 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
     @Autowired
     private ExtendRoleModelConverter extroleModelConverter;
 
-    @Autowired
-    private ViewNavigators viewNavigators;
-
-    @ViewComponent
-    private DataGrid<ExtendResourceRoleModel> roleModelsTable;
-
     @Override
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         this.loadRoles((RoleFilterChangeEvent) null);
     }
 
-
     private void loadRoles(@Nullable RoleFilterChangeEvent event) {
-        List<ExtendResourceRoleModel> items =
+        List<ExtResourceRoleModel> items =
                 roleRepository.getAllRoles().stream()
                         .filter(role -> event == null || event.matches(role))
-                        .map(extroleModelConverter::createResourceRoleModel)
-                        .map(m -> (ExtendResourceRoleModel) m)
+                        .map(extroleModelConverter::createExtResourceRoleModel)
                         .sorted(Comparator.comparing(BaseRoleModel::getName))
                         .toList();
 
         roleModelsDc.setItems(items);
     }
-
 
 
     

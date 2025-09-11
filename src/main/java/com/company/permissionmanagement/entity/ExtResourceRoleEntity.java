@@ -9,7 +9,7 @@ import jakarta.persistence.Entity;
 @JmixEntity
 @Entity
 @ReplaceEntity(ResourceRoleEntity.class)
-public class ExtendResourceRoleEntity extends ResourceRoleEntity {
+public class ExtResourceRoleEntity extends ResourceRoleEntity {
     @Column(name = "IS_FOR_USER")
     private Boolean forUser;
 

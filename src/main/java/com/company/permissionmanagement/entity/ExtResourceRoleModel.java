@@ -1,10 +1,12 @@
 package com.company.permissionmanagement.entity;
 
+import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.security.model.ResourceRoleModel;
 
 @JmixEntity
-public class ExtendResourceRoleModel extends ResourceRoleModel {
+@ReplaceEntity(ResourceRoleModel.class)
+public class ExtResourceRoleModel extends ResourceRoleModel {
 
     private Boolean forUser;
 

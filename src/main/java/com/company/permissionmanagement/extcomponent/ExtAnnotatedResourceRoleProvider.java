@@ -1,4 +1,4 @@
-package com.company.permissionmanagement.providers;
+package com.company.permissionmanagement.extcomponent;
 
 import com.company.permissionmanagement.anotations.ForUser;
 import io.jmix.core.DevelopmentException;
@@ -12,6 +12,7 @@ import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.ResourceRole;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ExtAnnotatedResourceRoleProvider extends AnnotatedResourceRoleProvider {
@@ -80,6 +81,12 @@ public class ExtAnnotatedResourceRoleProvider extends AnnotatedResourceRoleProvi
                     Map<String, String> props = role.getCustomProperties();
                     if (props == null) props = new HashMap<>();
                     props.put("forUser", String.valueOf(mark.value()));
+                    // Nếu là annotated role (không đến từ DB) và thiếu/blank databaseId → gán UUID ổn định theo code
+                    String dbId = props.get("databaseId");
+                    if (dbId == null || dbId.isBlank()) {
+                        String stable = UUID.nameUUIDFromBytes(role.getCode().getBytes(StandardCharsets.UTF_8)).toString();
+                        props.put("databaseId", stable);
+                    }
                     role.setCustomProperties(props);
                 }
             } catch (ClassNotFoundException ignored) {
