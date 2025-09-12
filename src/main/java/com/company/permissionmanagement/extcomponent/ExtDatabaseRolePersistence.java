@@ -1,16 +1,21 @@
 package com.company.permissionmanagement.extcomponent;
 
-
 import com.company.permissionmanagement.entity.ExtResourceRoleEntity;
 import com.company.permissionmanagement.entity.ExtResourceRoleModel;
 import io.jmix.core.*;
 import io.jmix.data.QueryTransformerFactory;
+import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.ResourceRoleModel;
+import io.jmix.security.model.RowLevelRoleModel;
+import io.jmix.securitydata.entity.ResourceRoleEntity;
+import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.securitydata.entity.RowLevelRoleEntity;
 import io.jmix.securitydata.impl.role.DatabaseRolePersistence;
 import io.jmix.securitydata.impl.role.provider.DatabaseRowLevelRoleProvider;
 import org.springframework.context.ApplicationContext;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ExtDatabaseRolePersistence extends DatabaseRolePersistence {
 
@@ -32,24 +37,27 @@ public class ExtDatabaseRolePersistence extends DatabaseRolePersistence {
 
     @Override
     public void save(ResourceRoleModel roleModel) {
-        // Lưu phần chuẩn (code, name, policies, childRoles, …)
+        // Lưu phần chuẩn (có thể dùng lại logic cha)
         super.save(roleModel);
 
-        // Gài thêm forUser
         if (!(roleModel instanceof ExtResourceRoleModel ext)) {
-            return; // màn hình của bạn đang dùng model mở rộng; nếu không phải thì bỏ qua
+            return;
         }
 
-        // 1) Ưu tiên lấy entity theo databaseId do Jmix gắn vào customProperties sau khi save
         ExtResourceRoleEntity entity = null;
+
+        // Lấy đúng entity thật từ DB theo databaseId hoặc code
         UUID dbId = parseUUID(roleModel.getCustomProperties().get("databaseId"));
         if (dbId != null) {
             entity = dataManager.load(ExtResourceRoleEntity.class)
                     .id(dbId)
                     .optional().orElse(null);
         }
-
-        // 2) Fallback theo code (khi vừa tạo mới mà databaseId chưa sẵn sàng)
+        if (entity == null && roleModel.getId() != null) {
+            entity = dataManager.load(ExtResourceRoleEntity.class)
+                    .id(roleModel.getId())
+                    .optional().orElse(null);
+        }
         if (entity == null) {
             entity = dataManager.load(ExtResourceRoleEntity.class)
                     .query("select e from ExtResourceRoleEntity e where e.code = :code")
@@ -57,12 +65,19 @@ public class ExtDatabaseRolePersistence extends DatabaseRolePersistence {
                     .optional().orElse(null);
         }
 
-        // 3) Cập nhật cờ forUser và lưu
-        if (entity != null) {
-            entity.setForUser(Boolean.TRUE.equals(ext.getForUser()));
-            dataManager.save(entity);
+        // Nếu không có thì tạo mới (trường hợp tạo mới hoàn toàn)
+        if (entity == null) {
+            entity = dataManager.create(ExtResourceRoleEntity.class);
+            entity.setId(roleModel.getId()); // Đặt id nếu bạn muốn đồng bộ với model
         }
+
+        // Gán thuộc tính
+        entity.setForUser(Boolean.TRUE.equals(ext.getForUser()));
+
+        // Lưu
+        dataManager.save(entity);
     }
+
 
     private UUID parseUUID(Object o) {
         try {
@@ -71,4 +86,59 @@ public class ExtDatabaseRolePersistence extends DatabaseRolePersistence {
             return null;
         }
     }
+
+    @Override
+    public void removeRoles(Collection<? extends BaseRoleModel> roleModels) {
+        List<Object> entitiesToRemove = roleModels.stream()
+                .map(model -> {
+                    if (model instanceof ExtResourceRoleModel) {
+                        ExtResourceRoleEntity entity = null;
+                        UUID dbId = parseUUID(model.getCustomProperties().get("databaseId"));
+                        if (dbId != null) {
+                            entity = dataManager.load(ExtResourceRoleEntity.class)
+                                    .id(dbId)
+                                    .optional().orElse(null);
+                        }
+                        if (entity == null) {
+                            entity = dataManager.load(ExtResourceRoleEntity.class)
+                                    .query("select e from ExtResourceRoleEntity e where e.code = :code")
+                                    .parameter("code", model.getCode())
+                                    .optional().orElse(null);
+                        }
+                        return entity;
+                    } else if (model instanceof ResourceRoleModel) {
+                        UUID dbId = model.getId();
+                        if (dbId != null) {
+                            return dataManager.load(ResourceRoleEntity.class)
+                                    .id(dbId)
+                                    .optional().orElse(null);
+                        }
+                        return null;
+                    } else if (model instanceof RowLevelRoleModel) {
+                        UUID dbId = model.getId();
+                        if (dbId != null) {
+                            return dataManager.load(RowLevelRoleEntity.class)
+                                    .id(dbId)
+                                    .optional().orElse(null);
+                        }
+                        return null;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Xóa các assignment
+        List<RoleAssignmentEntity> roleAssignments = dataManager.load(RoleAssignmentEntity.class)
+                .query("e.roleCode IN :codes")
+                .parameter("codes", roleModels.stream()
+                        .map(BaseRoleModel::getCode)
+                        .collect(Collectors.toList()))
+                .list();
+        entitiesToRemove.addAll(roleAssignments);
+
+        // Xóa vật lý
+        dataManager.remove(entitiesToRemove);
+    }
+
 }

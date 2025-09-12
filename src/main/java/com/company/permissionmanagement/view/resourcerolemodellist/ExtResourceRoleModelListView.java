@@ -1,8 +1,13 @@
 package com.company.permissionmanagement.view.resourcerolemodellist;
 
-import com.company.permissionmanagement.converter.ExtendRoleModelConverter;
+import com.company.permissionmanagement.converter.ExtRoleModelConverter;
 import com.company.permissionmanagement.entity.ExtResourceRoleModel;
+import com.company.permissionmanagement.extcomponent.ExtDatabaseRolePersistence;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.BaseRoleModel;
@@ -27,7 +32,16 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
     private ResourceRoleRepository roleRepository;
 
     @Autowired
-    private ExtendRoleModelConverter extroleModelConverter;
+    private ExtRoleModelConverter extroleModelConverter;
+
+    @Autowired
+    private ExtDatabaseRolePersistence extendDatabaseRolePersistence;
+
+    @ViewComponent
+    private DataGrid<ExtResourceRoleModel> roleModelsTable;
+
+    @Autowired
+    private Dialogs dialogs;
 
     @Override
     @Subscribe
@@ -39,13 +53,31 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
         List<ExtResourceRoleModel> items =
                 roleRepository.getAllRoles().stream()
                         .filter(role -> event == null || event.matches(role))
-                        .map(extroleModelConverter::createExtResourceRoleModel)
+                        .map(extroleModelConverter::createResourceRoleModel)
                         .sorted(Comparator.comparing(BaseRoleModel::getName))
                         .toList();
 
         roleModelsDc.setItems(items);
     }
 
+
+    @Subscribe("roleModelsTable.remove")
+    public void onRoleModelsTableRemove(ActionPerformedEvent event) {
+        List<ExtResourceRoleModel> selectedRoles = roleModelsTable.getSelectedItems().stream().toList();
+        if (!selectedRoles.isEmpty()) {
+            dialogs.createOptionDialog()
+                    .withHeader("Confirm delete")
+                    .withText("Are you sure you want to delete selected roles?")
+                    .withActions(
+                            new DialogAction(DialogAction.Type.YES).withHandler(e -> {
+                                extendDatabaseRolePersistence.removeRoles(selectedRoles);
+                                loadRoles(null);
+                            }),
+                            new DialogAction(DialogAction.Type.NO)
+                    )
+                    .open();
+        }
+    }
 
     
 
