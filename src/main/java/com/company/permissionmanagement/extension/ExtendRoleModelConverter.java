@@ -1,12 +1,9 @@
-package com.company.permissionmanagement.converter;
-
+package com.company.permissionmanagement.extension;
 
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
 import io.jmix.core.EntityStates;
 import io.jmix.security.model.ResourceRole;
-import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RoleModelConverter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -23,19 +20,29 @@ public class ExtendRoleModelConverter extends RoleModelConverter {
         this.entityStates = entityStates;
     }
 
-    public ExtendResourceRoleModel createExtResourceRoleModel(ResourceRole role) {
-        ExtendResourceRoleModel roleModel = this.metadata.create(ExtendResourceRoleModel.class);
-        this.initBaseParameters(roleModel, role);
-        roleModel.setScopes(role.getScopes());
-        roleModel.setResourcePolicies(this.createResourcePolicyModels(role.getResourcePolicies()));
-        this.entityStates.setNew(roleModel, false);
+    @Override
+    public ExtendResourceRoleModel createResourceRoleModel(ResourceRole role) {
+        ExtendResourceRoleModel model = this.metadata.create(ExtendResourceRoleModel.class);
+        this.initBaseParameters(model, role);
+        model.setScopes(role.getScopes());
+        model.setResourcePolicies(this.createResourcePolicyModels(role.getResourcePolicies()));
+        this.entityStates.setNew(model, false);
+
+        // Lấy từ customProperties
         Map<String, String> props = role.getCustomProperties();
         if (props != null) {
             String raw = props.get("forUser");
             if (raw != null) {
-                roleModel.setForUser(Boolean.parseBoolean(raw));
+                model.setForUser(Boolean.parseBoolean(raw));
             }
         }
-        return roleModel;
+
+        // Đồng bộ lại vào customProperties
+        if (model.getForUser() != null) {
+            model.getCustomProperties().put("forUser", String.valueOf(model.getForUser()));
+        }
+
+        return model;
     }
+
 }

@@ -1,4 +1,4 @@
-package com.company.permissionmanagement.components;
+package com.company.permissionmanagement.extension;
 
 import com.company.permissionmanagement.entity.ExtendResourceRoleEntity;
 import io.jmix.core.FetchPlanBuilder;

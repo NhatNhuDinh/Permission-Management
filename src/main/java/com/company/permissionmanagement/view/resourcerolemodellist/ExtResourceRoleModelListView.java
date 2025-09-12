@@ -1,8 +1,8 @@
 package com.company.permissionmanagement.view.resourcerolemodellist;
 
-import com.company.permissionmanagement.converter.ExtendRoleModelConverter;
+import com.company.permissionmanagement.extension.ExtendRoleModelConverter;
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
-import com.company.permissionmanagement.persistence.ExtendDatabaseRolePersistence;
+import com.company.permissionmanagement.extension.ExtendDatabaseRolePersistence;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.DialogAction;
@@ -53,7 +53,7 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
         List<ExtendResourceRoleModel> items =
                 roleRepository.getAllRoles().stream()
                         .filter(role -> event == null || event.matches(role))
-                        .map(extroleModelConverter::createExtResourceRoleModel)
+                        .map(extroleModelConverter::createResourceRoleModel)
                         .sorted(Comparator.comparing(BaseRoleModel::getName))
                         .toList();
 

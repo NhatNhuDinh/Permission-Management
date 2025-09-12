@@ -1,4 +1,4 @@
-package com.company.permissionmanagement.persistence;
+package com.company.permissionmanagement.extension;
 
 import com.company.permissionmanagement.entity.ExtendResourceRoleEntity;
 import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
@@ -37,7 +37,6 @@ public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
 
     @Override
     public void save(ResourceRoleModel roleModel) {
-        // Lưu phần chuẩn (có thể dùng lại logic cha)
         super.save(roleModel);
 
         if (!(roleModel instanceof ExtendResourceRoleModel ext)) {
@@ -45,8 +44,7 @@ public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
         }
 
         ExtendResourceRoleEntity entity = null;
-
-        // Lấy đúng entity thật từ DB theo databaseId hoặc code
+        // Lấy entity thật từ DB theo databaseId hoặc code
         UUID dbId = parseUUID(roleModel.getCustomProperties().get("databaseId"));
         if (dbId != null) {
             entity = dataManager.load(ExtendResourceRoleEntity.class)
@@ -65,16 +63,14 @@ public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
                     .optional().orElse(null);
         }
 
-        // Nếu không có thì tạo mới (trường hợp tạo mới hoàn toàn)
+        // Nếu không có thì tạo mới
         if (entity == null) {
             entity = dataManager.create(ExtendResourceRoleEntity.class);
-            entity.setId(roleModel.getId()); // Đặt id nếu bạn muốn đồng bộ với model
+            entity.setId(roleModel.getId()); // Đặt id để đồng bộ với model
         }
 
         // Gán thuộc tính
         entity.setForUser(Boolean.TRUE.equals(ext.getForUser()));
-
-        // Lưu
         dataManager.save(entity);
     }
 
@@ -137,7 +133,6 @@ public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
                 .list();
         entitiesToRemove.addAll(roleAssignments);
 
-        // Xóa vật lý
         dataManager.remove(entitiesToRemove);
     }
 

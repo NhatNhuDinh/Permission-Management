@@ -32,9 +32,10 @@ public class CustomAnnotatedRoleBuilder extends AnnotatedRoleBuilderImpl {
         try {
             roleClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Role class not found: " + className, e);
         }
 
-        if (roleClass != null && roleClass.isAnnotationPresent(ForUser.class)) {
+        if (roleClass.isAnnotationPresent(ForUser.class)) {
             ForUser ann = roleClass.getAnnotation(ForUser.class);
             role.getCustomProperties().put("forUser", String.valueOf(ann.value()));
 

@@ -1,7 +1,7 @@
 package com.company.permissionmanagement.config;
 
-import com.company.permissionmanagement.components.ExtDatabaseResourceRoleProvider;
-import com.company.permissionmanagement.persistence.ExtendDatabaseRolePersistence;
+import com.company.permissionmanagement.extension.ExtDatabaseResourceRoleProvider;
+import com.company.permissionmanagement.extension.ExtendDatabaseRolePersistence;
 import io.jmix.core.*;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.security.role.RolePersistence;
@@ -20,7 +20,7 @@ public class SecurityDataOverrides {
         return new ExtDatabaseResourceRoleProvider();
     }
 
-    @Bean(name = "sec_DatabaseRolePersistence") // <-- tên bean Jmix dùng, trùng để override
+    @Bean(name = "sec_DatabaseRolePersistence")
     public RolePersistence rolePersistence(ApplicationContext applicationContext,
                                            Metadata metadata,
                                            EntityStates entityStates,
