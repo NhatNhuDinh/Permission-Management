@@ -1,13 +1,12 @@
 package com.company.permissionmanagement.extension;
 
-import com.company.permissionmanagement.entity.ExtendResourceRoleEntity;
+import com.company.permissionmanagement.entity.ExtResourceRoleEntity;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.securitydata.impl.role.provider.DatabaseResourceRoleProvider;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class ExtDatabaseResourceRoleProvider extends DatabaseResourceRoleProvider {
 
@@ -21,7 +20,7 @@ public class ExtDatabaseResourceRoleProvider extends DatabaseResourceRoleProvide
     protected ResourceRole buildRole(Object entity) {
         ResourceRole role = super.buildRole(entity);
 
-        if (entity instanceof ExtendResourceRoleEntity ex) {
+        if (entity instanceof ExtResourceRoleEntity ex) {
             Boolean forUser = ex.getForUser();
             if (forUser != null) {
                 Map<String, String> props = role.getCustomProperties();

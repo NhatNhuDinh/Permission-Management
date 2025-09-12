@@ -1,4 +1,4 @@
-package com.company.permissionmanagement.security;
+package com.company.permissionmanagement.extension;
 
 import com.company.permissionmanagement.annotation.ForUser;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilderImpl;
@@ -15,9 +15,9 @@ import java.util.UUID;
 
 @Component("sec_CustomAnnotatedRoleBuilder")
 @Primary
-public class CustomAnnotatedRoleBuilder extends AnnotatedRoleBuilderImpl {
+public class ExtAnnotatedRoleBuilder extends AnnotatedRoleBuilderImpl {
 
-    public CustomAnnotatedRoleBuilder(
+    public ExtAnnotatedRoleBuilder(
             Collection<ResourcePolicyExtractor> resourcePolicyExtractors,
             Collection<RowLevelPolicyExtractor> rowLevelPolicyExtractors,
             ClassManager classManager

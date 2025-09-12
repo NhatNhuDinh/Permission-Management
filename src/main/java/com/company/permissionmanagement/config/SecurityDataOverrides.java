@@ -1,7 +1,7 @@
 package com.company.permissionmanagement.config;
 
 import com.company.permissionmanagement.extension.ExtDatabaseResourceRoleProvider;
-import com.company.permissionmanagement.extension.ExtendDatabaseRolePersistence;
+import com.company.permissionmanagement.extension.ExtDatabaseRolePersistence;
 import io.jmix.core.*;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.security.role.RolePersistence;
@@ -30,7 +30,7 @@ public class SecurityDataOverrides {
                                            EntityImportPlans entityImportPlans,
                                            QueryTransformerFactory queryTransformerFactory,
                                            DatabaseRowLevelRoleProvider databaseRowLevelRoleProvider) {
-        return new ExtendDatabaseRolePersistence(
+        return new ExtDatabaseRolePersistence(
                 applicationContext, metadata, entityStates, dataManager, fetchPlans,
                 entityImportExport, entityImportPlans, queryTransformerFactory, databaseRowLevelRoleProvider
         );

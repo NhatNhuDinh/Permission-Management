@@ -1,7 +1,7 @@
 package com.company.permissionmanagement.extension;
 
-import com.company.permissionmanagement.entity.ExtendResourceRoleEntity;
-import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
+import com.company.permissionmanagement.entity.ExtResourceRoleEntity;
+import com.company.permissionmanagement.entity.ExtResourceRoleModel;
 import io.jmix.core.*;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.security.model.BaseRoleModel;
@@ -17,11 +17,11 @@ import org.springframework.context.ApplicationContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
+public class ExtDatabaseRolePersistence extends DatabaseRolePersistence {
 
     private final DataManager dataManager;
 
-    public ExtendDatabaseRolePersistence(ApplicationContext applicationContext,
+    public ExtDatabaseRolePersistence(ApplicationContext applicationContext,
                                       Metadata metadata,
                                       EntityStates entityStates,
                                       DataManager dataManager,
@@ -39,33 +39,33 @@ public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
     public void save(ResourceRoleModel roleModel) {
         super.save(roleModel);
 
-        if (!(roleModel instanceof ExtendResourceRoleModel ext)) {
+        if (!(roleModel instanceof ExtResourceRoleModel ext)) {
             return;
         }
 
-        ExtendResourceRoleEntity entity = null;
+        ExtResourceRoleEntity entity = null;
         // Lấy entity thật từ DB theo databaseId hoặc code
         UUID dbId = parseUUID(roleModel.getCustomProperties().get("databaseId"));
         if (dbId != null) {
-            entity = dataManager.load(ExtendResourceRoleEntity.class)
+            entity = dataManager.load(ExtResourceRoleEntity.class)
                     .id(dbId)
                     .optional().orElse(null);
         }
         if (entity == null && roleModel.getId() != null) {
-            entity = dataManager.load(ExtendResourceRoleEntity.class)
+            entity = dataManager.load(ExtResourceRoleEntity.class)
                     .id(roleModel.getId())
                     .optional().orElse(null);
         }
         if (entity == null) {
-            entity = dataManager.load(ExtendResourceRoleEntity.class)
-                    .query("select e from ExtendResourceRoleEntity e where e.code = :code")
+            entity = dataManager.load(ExtResourceRoleEntity.class)
+                    .query("select e from ExtResourceRoleEntity e where e.code = :code")
                     .parameter("code", roleModel.getCode())
                     .optional().orElse(null);
         }
 
         // Nếu không có thì tạo mới
         if (entity == null) {
-            entity = dataManager.create(ExtendResourceRoleEntity.class);
+            entity = dataManager.create(ExtResourceRoleEntity.class);
             entity.setId(roleModel.getId()); // Đặt id để đồng bộ với model
         }
 
@@ -87,17 +87,17 @@ public class ExtendDatabaseRolePersistence extends DatabaseRolePersistence {
     public void removeRoles(Collection<? extends BaseRoleModel> roleModels) {
         List<Object> entitiesToRemove = roleModels.stream()
                 .map(model -> {
-                    if (model instanceof ExtendResourceRoleModel) {
-                        ExtendResourceRoleEntity entity = null;
+                    if (model instanceof ExtResourceRoleModel) {
+                        ExtResourceRoleEntity entity = null;
                         UUID dbId = parseUUID(model.getCustomProperties().get("databaseId"));
                         if (dbId != null) {
-                            entity = dataManager.load(ExtendResourceRoleEntity.class)
+                            entity = dataManager.load(ExtResourceRoleEntity.class)
                                     .id(dbId)
                                     .optional().orElse(null);
                         }
                         if (entity == null) {
-                            entity = dataManager.load(ExtendResourceRoleEntity.class)
-                                    .query("select e from ExtendResourceRoleEntity e where e.code = :code")
+                            entity = dataManager.load(ExtResourceRoleEntity.class)
+                                    .query("select e from ExtResourceRoleEntity e where e.code = :code")
                                     .parameter("code", model.getCode())
                                     .optional().orElse(null);
                         }

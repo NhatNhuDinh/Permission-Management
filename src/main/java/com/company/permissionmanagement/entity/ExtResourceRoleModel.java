@@ -6,7 +6,7 @@ import io.jmix.security.model.ResourceRoleModel;
 
 @JmixEntity
 @ReplaceEntity(ResourceRoleModel.class)
-public class ExtendResourceRoleModel extends ResourceRoleModel {
+public class ExtResourceRoleModel extends ResourceRoleModel {
 
     private Boolean forUser;
 

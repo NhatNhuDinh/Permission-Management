@@ -1,8 +1,8 @@
 package com.company.permissionmanagement.view.resourcerolemodellist;
 
-import com.company.permissionmanagement.extension.ExtendRoleModelConverter;
-import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
-import com.company.permissionmanagement.extension.ExtendDatabaseRolePersistence;
+import com.company.permissionmanagement.extension.ExtRoleModelConverter;
+import com.company.permissionmanagement.entity.ExtResourceRoleModel;
+import com.company.permissionmanagement.extension.ExtDatabaseRolePersistence;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.action.DialogAction;
@@ -26,19 +26,19 @@ import java.util.List;
 public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
 
     @ViewComponent
-    private CollectionContainer<ExtendResourceRoleModel> roleModelsDc;
+    private CollectionContainer<ExtResourceRoleModel> roleModelsDc;
 
     @Autowired
     private ResourceRoleRepository roleRepository;
 
     @Autowired
-    private ExtendRoleModelConverter extroleModelConverter;
+    private ExtRoleModelConverter extroleModelConverter;
 
     @Autowired
-    private ExtendDatabaseRolePersistence extendDatabaseRolePersistence;
+    private ExtDatabaseRolePersistence extDatabaseRolePersistence;
 
     @ViewComponent
-    private DataGrid<ExtendResourceRoleModel> roleModelsTable;
+    private DataGrid<ExtResourceRoleModel> roleModelsTable;
 
     @Autowired
     private Dialogs dialogs;
@@ -50,7 +50,7 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
     }
 
     private void loadRoles(@Nullable RoleFilterChangeEvent event) {
-        List<ExtendResourceRoleModel> items =
+        List<ExtResourceRoleModel> items =
                 roleRepository.getAllRoles().stream()
                         .filter(role -> event == null || event.matches(role))
                         .map(extroleModelConverter::createResourceRoleModel)
@@ -62,14 +62,14 @@ public class ExtResourceRoleModelListView extends ResourceRoleModelListView {
 
     @Subscribe("roleModelsTable.remove")
     public void onRoleModelsTableRemove(ActionPerformedEvent event) {
-        List<ExtendResourceRoleModel> selectedRoles = roleModelsTable.getSelectedItems().stream().toList();
+        List<ExtResourceRoleModel> selectedRoles = roleModelsTable.getSelectedItems().stream().toList();
         if (!selectedRoles.isEmpty()) {
             dialogs.createOptionDialog()
                     .withHeader("Confirm delete")
                     .withText("Are you sure you want to delete selected roles?")
                     .withActions(
                             new DialogAction(DialogAction.Type.YES).withHandler(e -> {
-                                extendDatabaseRolePersistence.removeRoles(selectedRoles);
+                                extDatabaseRolePersistence.removeRoles(selectedRoles);
                                 loadRoles(null);
                             }),
                             new DialogAction(DialogAction.Type.NO)

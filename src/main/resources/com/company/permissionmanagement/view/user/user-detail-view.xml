@@ -8,6 +8,10 @@
             <fetchPlan extends="_base"/>
             <loader/>
         </instance>
+        <!-- Container cho resource roles -->
+        <collection id="roleModelsDc"
+                    class="com.company.permissionmanagement.entity.ExtResourceRoleModel">
+        </collection>
     </data>
     <actions>
         <action id="saveAction" type="detail_saveClose"/>
@@ -31,6 +35,9 @@
             <textField id="lastNameField" property="lastName"/>
             <textField id="emailField" property="email"/>
             <comboBox id="timeZoneField" property="timeZoneId" clearButtonVisible="true"/>
+            <multiSelectComboBox id="resourceRolesSelectComboBox"
+                           itemsContainer="roleModelsDc"
+                           label="Resource Roles"/>
             <checkbox id="activeField" property="active"/>
         </formLayout>
         <hbox id="detailActions">

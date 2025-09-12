@@ -1,6 +1,6 @@
 package com.company.permissionmanagement.extension;
 
-import com.company.permissionmanagement.entity.ExtendResourceRoleModel;
+import com.company.permissionmanagement.entity.ExtResourceRoleModel;
 import io.jmix.core.EntityStates;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RoleModelConverter;
@@ -11,18 +11,18 @@ import java.util.Map;
 
 @Component
 @Primary
-public class ExtendRoleModelConverter extends RoleModelConverter {
+public class ExtRoleModelConverter extends RoleModelConverter {
 
     private final EntityStates entityStates;
 
-    public ExtendRoleModelConverter(EntityStates entityStates) {
+    public ExtRoleModelConverter(EntityStates entityStates) {
         super(entityStates);
         this.entityStates = entityStates;
     }
 
     @Override
-    public ExtendResourceRoleModel createResourceRoleModel(ResourceRole role) {
-        ExtendResourceRoleModel model = this.metadata.create(ExtendResourceRoleModel.class);
+    public ExtResourceRoleModel createResourceRoleModel(ResourceRole role) {
+        ExtResourceRoleModel model = this.metadata.create(ExtResourceRoleModel.class);
         this.initBaseParameters(model, role);
         model.setScopes(role.getScopes());
         model.setResourcePolicies(this.createResourcePolicyModels(role.getResourcePolicies()));

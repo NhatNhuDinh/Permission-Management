@@ -19,10 +19,10 @@
       focusComponent="form">
     <data>
         <instance id="roleModelDc"
-                  class="com.company.permissionmanagement.entity.ExtendResourceRoleModel">
+                  class="com.company.permissionmanagement.entity.ExtResourceRoleModel">
             <collection id="resourcePoliciesDc" property="resourcePolicies"/>
         </instance>
-        <collection id="childRolesDc" class="com.company.permissionmanagement.entity.ExtendResourceRoleModel"/>
+        <collection id="childRolesDc" class="com.company.permissionmanagement.entity.ExtResourceRoleModel"/>
     </data>
     <facets>
         <settings auto="true"/>

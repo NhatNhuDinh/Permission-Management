@@ -19,7 +19,7 @@
       focusComponent="roleModelsTable">
     <data readOnly="true">
         <collection id="roleModelsDc"
-                    class="com.company.permissionmanagement.entity.ExtendResourceRoleModel">
+                    class="com.company.permissionmanagement.entity.ExtResourceRoleModel">
         </collection>
     </data>
     <facets>
