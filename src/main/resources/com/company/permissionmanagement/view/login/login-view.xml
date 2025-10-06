@@ -3,6 +3,13 @@
       focusComponent="login"
       title="msg://LoginView.title">
     <layout justifyContent="CENTER" alignItems="CENTER" classNames="jmix-login-main-layout">
+        <vbox width="100%" justifyContent="CENTER" alignSelf="CENTER" alignItems="CENTER">
+            <image resource="/icons/vn_logo.png"
+                   width="120px"
+                   height="120px"/>
+            <h1 text="msg://loginForm.applicationTitle"/>
+            <span text="msg://loginForm.headerComment"/>
+        </vbox>
         <loginForm id="login"
                    forgotPasswordButtonVisible="false">
             <form title="msg://loginForm.headerTitle"
@@ -10,6 +17,7 @@
                   password="msg://loginForm.password"
                   rememberMe="msg://loginForm.rememberMe"
                   submit="msg://loginForm.submit"
+
                   forgotPassword="msg://loginForm.forgotPassword"/>
             <errorMessage title="msg://loginForm.errorTitle"
                           message="msg://loginForm.badCredentials"

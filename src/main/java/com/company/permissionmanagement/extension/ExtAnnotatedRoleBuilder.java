@@ -28,7 +28,7 @@ public class ExtAnnotatedRoleBuilder extends AnnotatedRoleBuilderImpl {
     @Override
     public ResourceRole createResourceRole(String className) {
         ResourceRole role = super.createResourceRole(className);
-        Class<?> roleClass = null;
+        Class<?> roleClass;
         try {
             roleClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
